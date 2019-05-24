@@ -1,7 +1,12 @@
 from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
 from time import sleep
 from random import randint
 import os
+import logging
+
+logging.basicConfig()
+logging.getLogger().setLevel(logging.INFO)
 
 NET_ID = os.environ.get("NET_ID")
 ID_PASSWORD = os.environ.get("ID_PASSWORD")
@@ -10,7 +15,8 @@ def input_by_letters(webelement_inputbox, content):
     for individual_char in content:
         webelement_inputbox.send_keys(individual_char)
         if __debug__:
-            sleep(randint(1,10) * 0.01)
+            pass
+            #sleep(randint(1,5) * 0.01)
 
 def log_in_with_credential(driver, netID, password):
     ucinetid_textbox = driver.find_element_by_id('ucinetid')
@@ -27,6 +33,9 @@ def log_in_with_credential(driver, netID, password):
 
     login_button = driver.find_element_by_xpath('//*[@id="login_button_span"]/input')
     login_button.click()
+
+    #Check if logged in successfully 
+    driver.find_element_by_xpath('/html/body/center[1]/table/tbody/tr/td/form[1]/input[4]')
 
 def print_study_list(driver):
     show_study_list_button = driver.find_element_by_xpath('/html/body/center[1]/table/tbody/tr/td/form[5]/input[4]')
@@ -56,22 +65,13 @@ def add_course_by_code(driver, course_code_str):
     send_request_button.click()
 
 def safely_log_out(driver):
-    logout_button = driver.find_element_by_xpath('/html/body/center[1]/form/input[4]')
-    logout_button.click()
+    try:
+        logout_button = driver.find_element_by_xpath('/html/body/center[1]/form/input[4]')
+        logout_button.click()
+    except:
+        logging.info("No action performed to log out")
 
-def new_session():
-    options = webdriver.ChromeOptions()
-    options.add_argument('--ignore-certificate-errors')
-    options.add_argument("--test-type")
-    #options.binary_location = "/usr/bin/chromium"
-    driver = webdriver.Chrome(chrome_options=options)
-    driver.get('https://www.reg.uci.edu/cgi-bin/webreg-redirect.sh')
-
-    if __debug__:
-        sleep(0.5)
-
-    log_in_with_credential(driver, NET_ID, ID_PASSWORD)
-
+def perform_session_operations(driver):
     if __debug__:
         sleep(0.5)
 
@@ -92,20 +92,57 @@ def new_session():
     if __debug__:
         sleep(1)
 
+def new_session():
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument('--ignore-certificate-errors')
+    chrome_options.add_argument("--test-type")
+    chrome_options.add_argument("--disable-extensions")
+    #chrome_options.binary_location = "/usr/bin/chromium"
+    driver = webdriver.Chrome(options=chrome_options)
+    driver.get('https://www.reg.uci.edu/cgi-bin/webreg-redirect.sh')
+
+    if __debug__:
+        sleep(0.5)
+    try:
+        log_in_with_credential(driver, NET_ID, ID_PASSWORD)
+    except NoSuchElementException:
+        logging.warning("Warning: Having trouble logging in.")
+        driver.close()
+        return False
+
+    try:
+        perform_session_operations(driver)
+    except: # (NoSuchElementException, KeyboardInterrupt):
+        logging.info("Safely logging out...")
+        safely_log_out(driver)
+        driver.close()
+        logging.info("Driver closed")
+
     # Logging out WebReg
     safely_log_out(driver)
 
     if __debug__:
         sleep(1)
-
-    driver.close()
+    try:
+        driver.close()
+    except:
+        pass
 
 def main():
     while True:
-        new_session()
+        logging.info("Starting new session...")
+        try:
+            new_session()
+        except Exception: 
+            logging.exception("Something awful happened!")
+
+        time_to_sleep = randint(20,35)
         if __debug__:
-            print("Halting for a couple of seconds")
-        sleep(randint(20,35))
+            logging.info("Halting for {0} seconds...".format(str(time_to_sleep)))
+        sleep(time_to_sleep)
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        logging.info("Exiting...")
