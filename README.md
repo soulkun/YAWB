@@ -11,13 +11,15 @@ to a remote server without interrupting your work.
 YAWB is based on Selenium, a program that controlls your brouser just like a phantom.
 To prevent being blocked by WebReg, YAWB executes every 25-35 seconds.
 
-Currently WAWB does not support waitlists.
+YAWB simulates what a real person does so you'll never get banned.
+
+Currently YAWB does not support waitlists.
 
 ## Prerequisite
 
 * Chrome or Chromium browser
 
-## Deployment 
+## Deployment
 
 * Install Selenium
 
@@ -33,13 +35,10 @@ https://sites.google.com/a/chromium.org/chromedriver/downloads
 chmod +x ./webdriver
 ```
 
-For macOS users: you may have to copy the webdriver to somewhere like /usr/local/bin/
-
-* Clone from this repo
+* Make YAWB yours
 
 ```bash
 git clone https://github.com/maao666/YAWB.git
-
 ```
 
 * Provide your UCInetID and password
@@ -49,10 +48,18 @@ export NET_ID="[Replace with your UCInetID]"
 export ID_PASSWORD="[Replace with your Password]"
 ```
 
-* Change the default course number
+* Add some juice
 
-You may add course either by individual course codes or a range of course codes.
+You may add your own courses to ```courses to add.txt```
 
-You may wanna modify add_courses.py
+```courses to add.txt``` will be fetched prior to each session, so
+ it can be modified during runtime.
 
-An interactive solution will be provided in the next release.
+* Fire it up
+
+```bash
+cd ./YAWB
+python3 ./add_courses.py
+```
+
+* We humbly ask you for a star if this bot does help you.
