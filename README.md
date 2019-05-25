@@ -2,6 +2,8 @@
 
 ## Helps you enroll in FULL courses
 
+![banner](assets/repository_banner.jpg "Repository Banner Image")
+
 ## Introduction
 
 YAWB helps you enroll in FULL courses by attempting adding courses in a

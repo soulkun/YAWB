@@ -180,6 +180,7 @@ def perform_session_operations(driver, course_list):
 
     pause_randomly()
 
+    #pylint: disable=unused-variable
     for i in range(2):
         perform_add_batch_courses(driver, course_list)
         pause_randomly()
