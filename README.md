@@ -8,7 +8,7 @@
 
 YAWB helps you enroll in FULL courses by attempting adding courses in a
 regular basis.
-Everything from logging in to logging out is o-matic so that it can be deployed 
+Everything from logging in to logging out is o-matic so that it can be deployed
 to a remote server without interrupting your work.
 YAWB is based on Selenium, a program that controlls your brouser just like a phantom.
 To prevent being blocked by WebReg, YAWB executes every 25-35 seconds.
@@ -31,7 +31,7 @@ pip3 install selenium
 
 * Download WebDriver and make it executable
 
-https://sites.google.com/a/chromium.org/chromedriver/downloads
+<https://sites.google.com/a/chromium.org/chromedriver/downloads>
 
 ```bash
 chmod +x ./webdriver
